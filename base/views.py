@@ -2,14 +2,16 @@ from django.shortcuts import render,redirect
 from django.contrib.auth import login,logout
 from django.contrib import messages,auth
 from django.contrib.auth.models import User
-from .models import Profile,Post_Upload
+from .models import Profile,Post_Upload,Post_Like
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
 @login_required(login_url='signin')
 def Home(request):
-    context = {}
+    profile = Profile.objects.get(user=request.user)
+    posts = Post_Upload.objects.all()
+    context = {"posts":posts,"profile":profile}
     return render(request,'index.html',context)
 
 
@@ -122,13 +124,36 @@ def Setting(request):
 
 
 def Upload(request):
+    
     if request.method == "POST":
-        user = request.user.username
+        user = request.user
+        profile_pic = Profile.objects.get(user=user)
         image = request.FILES.get('image')
         caption = request.POST['caption']
 
-        new_Post = Post_Upload.objects.create(user=user, image=image , caption=caption)
+        new_Post = Post_Upload.objects.create(user=user, image=image , caption=caption,profile_pic=profile_pic)
         new_Post.save()
         return redirect("home")
     else:
         return redirect('home')
+
+
+def Post_like(request):
+    user = request.user
+    post_id = request.GET.get('post_id')
+    
+    post = Post_Upload.objects.get(id=post_id)
+
+    like_filter = Post_Like.objects.filter(user=user , post_id=post_id).first()
+
+    if like_filter == None:
+        new_like = Post_Like.objects.create(user=user , post_id=post_id)
+        new_like.save()
+        post.no_of_like = post.no_of_like+1
+        post.save()
+        return redirect('home')
+    else:
+        like_filter.delete()
+        post.no_of_like = post.no_of_like-1
+        post.save()
+        return redirect('home') 
