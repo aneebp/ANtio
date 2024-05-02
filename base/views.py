@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from django.contrib.auth import login,logout
 from django.contrib import messages,auth
 from django.contrib.auth.models import User
-from .models import Profile
+from .models import Profile,Post_Upload
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
@@ -83,7 +83,6 @@ def Profile_view(request):
 
 @login_required(login_url='signin')
 def Setting(request):
-    print(request.user)
     profile = Profile.objects.get(user=request.user)
     if request.method == "POST":
         if request.FILES.get('image') == None:
@@ -120,3 +119,16 @@ def Setting(request):
     context = {"profile":profile}
     return render(request, 'setting.html',context)
 
+
+
+def Upload(request):
+    if request.method == "POST":
+        user = request.user.username
+        image = request.FILES.get('image')
+        caption = request.POST['caption']
+
+        new_Post = Post_Upload.objects.create(user=user, image=image , caption=caption)
+        new_Post.save()
+        return redirect("home")
+    else:
+        return redirect('home')
