@@ -44,4 +44,12 @@ class Post_Like(models.Model):
         return self.user.username
     
 
+    
+class FollowersCount(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user')
+    follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name='follower')
 
+
+    def __str__(self):
+        return self.user.username
+    

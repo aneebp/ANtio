@@ -1,8 +1,8 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth import login,logout
 from django.contrib import messages,auth
 from django.contrib.auth.models import User
-from .models import Profile,Post_Upload,Post_Like
+from .models import Profile,Post_Upload,Post_Like,FollowersCount
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
@@ -79,8 +79,17 @@ def Logout(request):
     return redirect('signin')
 
 @login_required(login_url='signin')
-def Profile_view(request):
-    context = {}
+def Profile_view(request,pk):
+    user_object = User.objects.get(username=pk)
+    user_profile = Profile.objects.get(user=user_object)
+    user_post = Post_Upload.objects.filter(user=user_object)
+
+    post_count = user_post.count()
+    context = {
+        "user_profile":user_profile,
+        "user_post":user_post,
+        "post_count":post_count
+        }
     return render(request, 'profile.html',context)
 
 @login_required(login_url='signin')
@@ -157,3 +166,21 @@ def Post_like(request):
         post.no_of_like = post.no_of_like-1
         post.save()
         return redirect('home') 
+
+
+
+def follow(request):
+    if request.method == 'POST':
+        follower = request.POST['follower']
+        user = request.POST['user']
+
+        if FollowersCount.objects.filter(follower=follower, user=user).first():
+            delete_follower = FollowersCount.objects.get(follower=follower, user=user)
+            delete_follower.delete()
+            return redirect('/profile/'+user)
+        else:
+            new_follower = FollowersCount.objects.create(follower=follower, user=user)
+            new_follower.save()
+            return redirect('/profile/'+user)
+    else:
+        return redirect('/')
