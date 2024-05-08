@@ -10,7 +10,6 @@ urlpatterns = [
     path('setting',views.Setting,name="setting"),
     path('upload',views.Upload,name="upload"),
     path('like-post',views.Post_like,name="like-post"),
-    path('follow',views.follow,name="follow"),
 
 
 

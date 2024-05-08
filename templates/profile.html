@@ -28,7 +28,7 @@
 
 			<div class="feature-photo">
 				<figure><img src="{% static 'images/resources/timeline-1.jpg' %}" alt=""></figure>
-				<form method="POST" action="follow">
+				<form method="POST">
 					{% csrf_token %}
 					<div class="add-btn">
 					<span style="color: white; font-size: 27px; margin-right: 520px;"><b><u><a href="/">Home</a></u></b></span>
@@ -39,17 +39,18 @@
 					{% else %}
 					<span style="color: white; font-size: 27px;"><b>{{post_count}} Post</b></span>
 					{% endif %}
-					<span style="color: white; font-size: 27px;"><b>1.7m followers</b></span>
-					<span style="color: white; font-size: 27px;"><b>3.5k following</b></span>
+					<span style="color: white; font-size: 27px;"><b>{{following_count}} followers</b></span>
+					<span style="color: white; font-size: 27px;"><b>{{followers_count}} following</b></span>
 
 					<input type="hidden" name="follower" value="{{user_profile.user}}">
 					<input type="hidden" name="user" value="{{user.username}}">
 
-					{% comment %} {% if request.user == user_profile.user %}
+					 {% if request.user == user_profile.user %}
 					<a href="{% url 'setting' %}" title="" data-ripple=""><button type="button" style="background-color: #ffc0cb; border: #ffc0cb;">Profile Settings</button></a>
-					{% else %} {% endcomment %}
-					<a href="" title="" data-ripple=""><button type="submit" style="background-color: #ffc0cb; border: #ffc0cb;">Follow</button></a>
-					{% comment %} {% endif %} {% endcomment %}
+					{% else %} 
+
+					<button type="submit" style="background-color: #ffc0cb; border: #ffc0cb;">{{text_button}}</button>
+			 		{% endif %} 
 					</div>
 				</form>
 

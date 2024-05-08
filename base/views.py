@@ -81,6 +81,39 @@ def Logout(request):
 @login_required(login_url='signin')
 def Profile_view(request,pk):
     user_object = User.objects.get(username=pk)
+    
+    if request.method == "POST":
+        follower_username = request.POST['follower']
+        user_username = request.POST['user']
+        
+        # Get User model instances based on usernames
+        follower_user = User.objects.get(username=follower_username)
+        user_user = User.objects.get(username=user_username)
+
+        if FollowersCount.objects.filter(follower=follower_user,user=user_user).first():
+            delete_follower = FollowersCount.objects.get(follower=follower_user,user=user_user)
+            delete_follower.delete()
+            
+        else:
+            add_follower = FollowersCount.objects.create(follower=follower_user,user=user_user)
+            add_follower.save()
+    return redirect('profile',pk=pk)
+
+    text_button = ""
+    followers = request.user.username
+    user = pk
+    user_user = User.objects.get(username=user)
+    followers_followers = User.objects.get(username=followers)
+    if FollowersCount.objects.filter(follower=followers_followers,user=user_user).first():
+        text_button = "Unfollow"
+    else:
+        text_button = "Follow"
+
+
+    following_count = FollowersCount.objects.filter(follower=user_object).count()
+    followers_count = FollowersCount.objects.filter(user=user_object).count()
+
+
     user_profile = Profile.objects.get(user=user_object)
     user_post = Post_Upload.objects.filter(user=user_object)
 
@@ -88,7 +121,10 @@ def Profile_view(request,pk):
     context = {
         "user_profile":user_profile,
         "user_post":user_post,
-        "post_count":post_count
+        "post_count":post_count,
+        "following_count":following_count,
+        "followers_count":followers_count,
+        "text_button":text_button
         }
     return render(request, 'profile.html',context)
 
@@ -166,21 +202,3 @@ def Post_like(request):
         post.no_of_like = post.no_of_like-1
         post.save()
         return redirect('home') 
-
-
-
-def follow(request):
-    if request.method == 'POST':
-        follower = request.POST['follower']
-        user = request.POST['user']
-
-        if FollowersCount.objects.filter(follower=follower, user=user).first():
-            delete_follower = FollowersCount.objects.get(follower=follower, user=user)
-            delete_follower.delete()
-            return redirect('/profile/'+user)
-        else:
-            new_follower = FollowersCount.objects.create(follower=follower, user=user)
-            new_follower.save()
-            return redirect('/profile/'+user)
-    else:
-        return redirect('/')
