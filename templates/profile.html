@@ -45,11 +45,10 @@
 					<input type="hidden" name="follower" value="{{user_profile.user}}">
 					<input type="hidden" name="user" value="{{user.username}}">
 
-					 {% if request.user == user_profile.user %}
+					{% if request.user == user_profile.user %}
 					<a href="{% url 'setting' %}" title="" data-ripple=""><button type="button" style="background-color: #ffc0cb; border: #ffc0cb;">Profile Settings</button></a>
 					{% else %} 
-
-					<button type="submit" style="background-color: #ffc0cb; border: #ffc0cb;">{{text_button}}</button>
+					<button type="submit" style="background-color: #ffc0cb; border: #ffc0cb;">{{button_text}}</button>
 			 		{% endif %} 
 					</div>
 				</form>

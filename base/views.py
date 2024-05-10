@@ -81,7 +81,6 @@ def Logout(request):
 @login_required(login_url='signin')
 def Profile_view(request,pk):
     user_object = User.objects.get(username=pk)
-    
     if request.method == "POST":
         follower_username = request.POST['follower']
         user_username = request.POST['user']
@@ -90,33 +89,26 @@ def Profile_view(request,pk):
         follower_user = User.objects.get(username=follower_username)
         user_user = User.objects.get(username=user_username)
 
-        if FollowersCount.objects.filter(follower=follower_user,user=user_user).first():
+        followercheck = FollowersCount.objects.filter(follower=follower_user,user=user_user).first()
+
+        if followercheck == None:
+             add_follower = FollowersCount.objects.create(follower=follower_user,user=user_user)
+             add_follower.save()
+             return redirect('profile',pk=pk)
+        else:
             delete_follower = FollowersCount.objects.get(follower=follower_user,user=user_user)
             delete_follower.delete()
-            
-        else:
-            add_follower = FollowersCount.objects.create(follower=follower_user,user=user_user)
-            add_follower.save()
-    return redirect('profile',pk=pk)
-
-    text_button = ""
-    followers = request.user.username
-    user = pk
-    user_user = User.objects.get(username=user)
-    followers_followers = User.objects.get(username=followers)
-    if FollowersCount.objects.filter(follower=followers_followers,user=user_user).first():
-        text_button = "Unfollow"
+            return redirect('profile',pk=pk)
+    user = request.user
+    if FollowersCount.objects.filter(follower=user_object,user=user).exists():
+        button_text = "Unfollow"
     else:
-        text_button = "Follow"
-
-
-    following_count = FollowersCount.objects.filter(follower=user_object).count()
-    followers_count = FollowersCount.objects.filter(user=user_object).count()
-
-
+        button_text = "Follow"
+    
     user_profile = Profile.objects.get(user=user_object)
     user_post = Post_Upload.objects.filter(user=user_object)
-
+    following_count = FollowersCount.objects.filter(follower=user_object).count()
+    followers_count = FollowersCount.objects.filter(user=user_object).count()
     post_count = user_post.count()
     context = {
         "user_profile":user_profile,
@@ -124,7 +116,7 @@ def Profile_view(request,pk):
         "post_count":post_count,
         "following_count":following_count,
         "followers_count":followers_count,
-        "text_button":text_button
+        "button_text" : button_text,
         }
     return render(request, 'profile.html',context)
 
