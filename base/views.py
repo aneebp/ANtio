@@ -4,6 +4,7 @@ from django.contrib import messages,auth
 from django.contrib.auth.models import User
 from .models import Profile,Post_Upload,Post_Like,FollowersCount
 from django.contrib.auth.decorators import login_required
+from itertools import chain
 
 # Create your views here.
 
@@ -11,7 +12,13 @@ from django.contrib.auth.decorators import login_required
 def Home(request):
     profile = Profile.objects.get(user=request.user)
     posts = Post_Upload.objects.all()
-    context = {"posts":posts,"profile":profile}
+    #show only the user posts you following 
+    user_following_list = FollowersCount.objects.filter(user=request.user).values_list('follower', flat=True)
+
+    feed_lists = Post_Upload.objects.filter(user__in=user_following_list)
+    for feed in feed_lists:
+        print(feed)
+    context = {"posts":feed_lists,"profile":profile}
     return render(request,'index.html',context)
 
 
@@ -32,7 +39,6 @@ def SignUp(request):
             else:
                 user = User.objects.create_user(username=username,email=email,password=Password)
                 user.save()
-
                 #log user 
                 user_log = auth.authenticate(username=username,password=Password)
                 auth.login(request, user_log)

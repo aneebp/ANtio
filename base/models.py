@@ -11,7 +11,7 @@ class Profile(models.Model):
     email = models.EmailField()
     bio = models.TextField(max_length=300, blank=True)
     password = models.CharField(max_length=100)
-    profileImg = models.ImageField(upload_to='profile_images',default="images/blank-profile-piicture.png")
+    profileImg = models.ImageField(upload_to='profile_images',default="images/blank-profile-picture.png")
     created = models.DateTimeField(auto_now_add=True)
 
 
