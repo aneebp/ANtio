@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from .models import Profile,Post_Upload,Post_Like,FollowersCount
 from django.contrib.auth.decorators import login_required
 from itertools import chain
+from django.db.models import Q
 
 # Create your views here.
 
@@ -200,3 +201,23 @@ def Post_like(request):
         post.no_of_like = post.no_of_like-1
         post.save()
         return redirect('home') 
+
+
+def Search(request):
+    profile = Profile.objects.get(user=request.user)
+    value = request.GET.get('q')
+    
+    username_profile_list = User.objects.filter(
+        Q(username__icontains=value) |
+        Q(profile__name__icontains=value) |
+        Q(profile__bio__icontains=value)
+    )
+    # Fetch profiles corresponding to the usernames in username_profile_list
+    profile_objects = Profile.objects.filter(user__in=username_profile_list)
+
+    context = {
+        "profile": profile,
+        "username_profile_list": username_profile_list,
+        "profile_objects": profile_objects  # Renamed to plural for clarity
+    }
+    return render(request, "search.html", context)

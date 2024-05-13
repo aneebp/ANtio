@@ -21,6 +21,19 @@
             }
         });
 
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var form = document.getElementById('searchForm');
+            var input = document.getElementById('searchInput');
+    
+            input.addEventListener('keypress', function(event) {
+                if (event.keyCode === 13) { // Enter key
+                    event.preventDefault(); // Prevent default form submission
+                    form.submit(); // Submit the form
+                }
+            });
+        });
+
     
         /*--------------------------------------------------*/
         /*  Tippy JS 
