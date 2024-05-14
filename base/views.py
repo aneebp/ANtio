@@ -2,10 +2,12 @@ from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth import login,logout
 from django.contrib import messages,auth
 from django.contrib.auth.models import User
-from .models import Profile,Post_Upload,Post_Like,FollowersCount
+from .models import Profile,Post_Upload,Post_Like,FollowersCount,Comment
 from django.contrib.auth.decorators import login_required
 from itertools import chain
 from django.db.models import Q
+import random
+from django.core.exceptions import MultipleObjectsReturned
 
 # Create your views here.
 
@@ -15,11 +17,28 @@ def Home(request):
     posts = Post_Upload.objects.all()
     #show only the user posts you following 
     user_following_list = FollowersCount.objects.filter(user=request.user).values_list('follower', flat=True)
+    print(user_following_list)
 
     feed_lists = Post_Upload.objects.filter(user__in=user_following_list)
-    for feed in feed_lists:
-        print(feed)
-    context = {"posts":feed_lists,"profile":profile}
+
+    #user suggestion
+    all_users = User.objects.exclude(username=request.user.username)
+
+    # Filter out users the current user is already following
+    new_suggestion = [user for user in all_users if user.id not in user_following_list]
+
+    # Shuffle the list of suggestions
+    random.shuffle(new_suggestion)
+
+    # Limit the number of suggestions to 4
+    suggestion_user_profile_list = Profile.objects.filter(user__in=new_suggestion)[:4]
+
+    context = {
+        "posts": feed_lists,
+        "profile": profile,
+        "suggestion_user_profile_list": suggestion_user_profile_list
+    }
+    return render(request, 'index.html', context)
     return render(request,'index.html',context)
 
 
@@ -53,7 +72,7 @@ def SignUp(request):
                     password=Password
                 )
 
-                return redirect('home')
+                return redirect('setting')
         else:
             messages.warning(request , "Password doesn't match")
             return redirect('signup')
@@ -221,3 +240,32 @@ def Search(request):
         "profile_objects": profile_objects  # Renamed to plural for clarity
     }
     return render(request, "search.html", context)
+
+def comment(request, username):
+    if request.method == 'POST':
+        comment_text = request.POST.get('comment')
+
+        try:
+            # Attempt to fetch the post
+            post = Post_Upload.objects.get(user__username=username)
+        except MultipleObjectsReturned:
+            # Handle the case where multiple posts are returned
+            # You can choose to handle this situation in various ways,
+            # such as displaying an error message or redirecting the user.
+            # For now, let's redirect the user back to the home page.
+            return redirect('home')
+        except Post_Upload.DoesNotExist:
+            # Handle the case where no post is found
+            # You might want to display an error message or handle
+            # this situation differently based on your application's requirements.
+            return redirect('home')  # Redirecting to home page for now
+
+        # Create a new comment object
+        comment = Comment.objects.create(
+            post=post,
+            user=request.user,
+            comment_text=comment_text
+        )
+
+        # Redirect back to the home page
+        return redirect('home')
