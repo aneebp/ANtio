@@ -15,6 +15,7 @@ import os
 from environ import Env
 env = Env()
 Env.read_env()
+print(f"SECRET_KEY: {os.getenv('SECRET_KEY')}")
 
 ENVIRONMENT = env('ENVIRONMENT', default="development")
 
