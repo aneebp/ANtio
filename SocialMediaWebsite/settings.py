@@ -28,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 ENVIRONMENT = env('ENVIRONMENT', default="development")
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = "i_0u2y4k(asj)b^hp#ef%ogcasuf)#)o5t!tr073seyf4!%)!4"
 print(f"ENVIRONMENT: {ENVIRONMENT}")
 print(f"SECRET_KEY: {SECRET_KEY}")
 print(env("DATABASE_URL"))
