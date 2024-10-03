@@ -13,6 +13,10 @@ services:
       - .:/app
     env_file:
       - ./SocialMediaWebsite/.env
+    environment:
+      ENVIRONMENT: production
+      SECRET_KEY: i_0u2y4k(asj)b^hp#ef%ogcasuf)#)o5t!tr073seyf4!%)!4
+      DATABASE_URL: postgresql://postgres:UUVhOVTfXPtijxlHmvJzcveipXuzuSpu@autorack.proxy.rlwy.net:56715/railway
     depends_on:
       - postgres
 
