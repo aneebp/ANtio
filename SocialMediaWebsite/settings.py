@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-ENVIRONMENT = env('ENVIRONMENT', default="development")
+ENVIRONMENT = "production"
 SECRET_KEY = "i_0u2y4k(asj)b^hp#ef%ogcasuf)#)o5t!tr073seyf4!%)!4"
 print(f"ENVIRONMENT: {ENVIRONMENT}")
 print(f"SECRET_KEY: {SECRET_KEY}")
@@ -103,7 +103,7 @@ if ENVIRONMENT == "development":
 else:
     import dj_database_url
     DATABASES = {
-        'default': dj_database_url.parse(env('DATABASE_URL', default='postgresql://'))
+        'default': dj_database_url.parse('postgresql://postgres:UUVhOVTfXPtijxlHmvJzcveipXuzuSpu@autorack.proxy.rlwy.net:56715/railway', default='postgresql://')
     }
 
 
