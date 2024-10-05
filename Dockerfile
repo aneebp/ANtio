@@ -15,10 +15,6 @@ COPY requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-RUN echo "ENVIRONMENT: ${ENVIRONMENT}"
-RUN echo "SECRET_KEY: ${SECRET_KEY}"
-RUN echo "DATABASE_URL: ${DATABASE_URL}"
-
 
 #COPY source(from our code) to dest(app)
 COPY . .

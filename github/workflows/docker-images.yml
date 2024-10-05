@@ -1,0 +1,14 @@
+name: Publish Docker Images
+
+on: push
+
+jobs:
+  build_and_publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@4
+      - name: Build and push Docker Image
+        runs: |
+          docker login gbcr.io --username aneebp --password ${{ secrets.MY_PAT}}
+          docker build . -t ghcr.io/aneebp/my-socialmedia-image
+          docker push ghcr.io/aneebp/my-socialmedia-image
