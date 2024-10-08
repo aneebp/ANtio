@@ -38,7 +38,7 @@ else:
 
 ALLOWED_HOSTS = ['*']
 
-CSRF_TRUSTED_ORIGINS = ['https://antio-production.up.railway.app/']
+CSRF_TRUSTED_ORIGINS = ['https://antio-production.up.railway.app']
 
 
 # Application definition
