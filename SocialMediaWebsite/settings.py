@@ -36,7 +36,7 @@ if ENVIRONMENT == 'development':
 else:
     DEBUG = False
 
-ALLOWED_HOSTS = ['https://antio-production.up.railway.app']
+ALLOWED_HOSTS = ['antio-production.up.railway.app', 'localhost', '127.0.0.1']
 
 CSRF_TRUSTED_ORIGINS = ['https://antio-production.up.railway.app','https://antio-production.up.railway.app/signup']
 
