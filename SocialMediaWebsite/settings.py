@@ -36,9 +36,9 @@ if ENVIRONMENT == 'development':
 else:
     DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['https://antio-production.up.railway.app']
 
-CSRF_TRUSTED_ORIGINS = ['https://antio-production.up.railway.app']
+CSRF_TRUSTED_ORIGINS = ['https://antio-production.up.railway.app','https://antio-production.up.railway.app/signup']
 
 
 # Application definition
